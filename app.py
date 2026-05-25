@@ -1,125 +1,112 @@
 import streamlit as st
 import pandas as pd
 import random
-from datetime import datetime
 
-# --- PAGE CONFIGURATION & PREMIUM THEME ---
-st.set_page_config(
-    page_title="NHS | Create Account",
-    page_icon="👤",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="NHS | Portal", page_icon="📈", layout="wide")
 
-# Custom CSS to match your "Light & Professional" screenshot
+# --- PREMIUM CSS (Fixing Button & Design) ---
 st.markdown("""
     <style>
-    /* Main Background */
-    .stApp {
-        background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);
-        color: #1e293b;
+    .stApp { background: #f0f7ff; color: #1e293b; }
+    
+    /* Registration Card */
+    .reg-card {
+        background: white; padding: 30px; border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
     }
     
-    /* Center the login box */
-    .main-box {
-        background-color: white;
-        padding: 40px;
-        border-radius: 24px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        border: 1px solid #f1f5f9;
-        margin-top: 20px;
+    /* Large Blue Button Fix */
+    div.stButton > button {
+        background-color: #00aeef !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 20px !important;
+        width: 100% !important;
+        font-weight: bold !important;
+        font-size: 20px !important;
+        height: 60px !important;
+        box-shadow: 0 4px 15px rgba(0,174,239,0.4) !important;
     }
     
-    h1, h2, h3 {
-        color: #0f172a;
-        font-family: 'Inter', sans-serif;
-        text-align: center;
+    /* Navigation Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #ffffff; border-radius: 10px; padding: 10px 20px;
+        color: #64748b; border: 1px solid #e2e8f0;
     }
-
-    /* Styling the Input Labels */
-    label {
-        font-weight: 500 !important;
-        color: #475569 !important;
-        margin-bottom: 8px !important;
-    }
-
-    /* Styling Input Fields */
-    .stTextInput > div > div > input {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 12px;
-        color: #1e293b;
-    }
-
-    /* The "Complete Registration" Blue Button */
-    div.stButton > button:first-child {
-        background: #00aeef;
-        background-color: #00aeef;
-        color: white;
-        border: none;
-        border-radius: 30px;
-        padding: 15px 0px;
-        font-size: 18px;
-        font-weight: 600;
-        width: 100%;
-        margin-top: 20px;
-        box-shadow: 0 4px 14px 0 rgba(0,174,239,0.39);
-    }
-    
-    div.stButton > button:first-child:hover {
-        background-color: #0096ce;
-        border: none;
-        color: white;
-    }
-
-    /* Footer Text */
-    .footer-link {
-        text-align: center;
-        margin-top: 25px;
-        color: #64748b;
-        font-size: 14px;
+    .stTabs [aria-selected="true"] {
+        background-color: #00aeef !important; color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- INITIALIZE SESSION STATE ---
+# --- APP LOGIC ---
 if "registered" not in st.session_state:
     st.session_state.registered = False
 
-# --- REGISTRATION PAGE (The Screenshot Look) ---
+# --- REGISTRATION SCREEN ---
 if not st.session_state.registered:
-    st.markdown("<h3>Create account</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#64748b;'>Join thousands of others building their future on our platform.</p>", unsafe_allow_html=True)
-    
-    # Create the form layout exactly like the image
-    with st.container():
-        col1, col2 = st.columns(2)
-        with col1:
-            first_name = st.text_input("First name", placeholder="First name")
-        with col2:
-            last_name = st.text_input("Last name", placeholder="Last name")
-            
-        username = st.text_input("Username", placeholder="Choose username")
-        email = st.text_input("Email address", placeholder="you@example.com")
-        phone = st.text_input("Phone number", placeholder="08012345678")
-        referral = st.text_input("Referral (optional)", value="okonaneozeng")
-        password = st.text_input("Password", placeholder="Choose password", type="password")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("<h2 style='text-align:center;'>Create account</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#64748b;'>Join thousands building their future on NHS.</p>", unsafe_allow_html=True)
         
-        if st.button("Complete registration"):
-            if first_name and last_name and username and email and password:
-                st.session_state.username = username
+        with st.container():
+            f_name = st.text_input("First name", placeholder="e.g. David")
+            l_name = st.text_input("Last name", placeholder="e.g. Edet")
+            u_name = st.text_input("Username", placeholder="Choose username")
+            email = st.text_input("Email address", placeholder="name@example.com")
+            phone = st.text_input("Phone number", placeholder="081...")
+            ref = st.text_input("Referral (optional)", value="okonaneozeng")
+            pwd = st.text_input("Password", type="password")
+            
+            # Simplified trigger: If they click, they go in!
+            if st.button("COMPLETE REGISTRATION"):
+                st.session_state.username = u_name if u_name else "User"
                 st.session_state.registered = True
                 st.rerun()
-            else:
-                st.error("Please fill in all required fields.")
-                
-    st.markdown("<div class='footer-link'>Already have an account? <span style='color:#00aeef; font-weight:600;'>Sign in</span></div>", unsafe_allow_html=True)
 
-# --- MAIN APP (After Registration) ---
+# --- THE REAL DASHBOARD (What they will see) ---
 else:
-    # Here is where the Invest, Home, and My tabs go
-    st.title(f"Welcome to NHS, {st.session_state.username}")
-    st.info("Your account is now active and approved by NHPC.")
-    # (The rest of your Invest/My code would go here)
+    st.markdown(f"### Welcome back, {st.session_state.username} 👋")
     
+    tab1, tab2, tab3 = st.tabs(["🏠 Home", "💰 Invest", "👤 My"])
+
+    with tab1:
+        st.markdown("## NHS: Nigerian Help Support")
+        st.info("Approved by NHPC | Tier-1 Asset Management Platform")
+        st.write("Current global infrastructure partners: 14 | Active nodes: 124,000+")
+        st.image("https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80", caption="NHS Global Operations Network")
+
+    with tab2:
+        st.markdown("## Investment Portfolios")
+        # VIP 1
+        with st.expander("VIP 1 - Agricultural Logistics"):
+            st.write("Cost: ₦5,000 | Daily: ₦1,150 | Term: 30 Days")
+            if st.button("Subscribe to VIP 1"):
+                st.success("Redirecting to Moniepoint Clearing Gateway...")
+        
+        # VIP 5
+        with st.expander("VIP 5 - Global Supply Chain"):
+            st.write("Cost: ₦130,000 | Daily: ₦15,000 | Term: 20 Days")
+            if st.button("Subscribe to VIP 5"):
+                st.warning("Contact Escrow Agent for High-Volume Clearance.")
+
+    with tab3:
+        st.markdown("## Client Account Node")
+        c1, c2 = st.columns(2)
+        c1.metric("Wallet Balance", "₦0.00")
+        c2.metric("Active Contracts", "0")
+        
+        st.divider()
+        st.markdown("#### Official Settlement Data")
+        st.markdown("""
+        - **Bank:** Moniepoint
+        - **Account:** 8126419410 (Eric Kingsley Edet)
+        - **Crypto:** BNB Smart Chain (BEP20)
+        """)
+        st.write("---")
+        st.caption("🔒 Verified by NHPC | Security Protocol 2026-X99")
+            
