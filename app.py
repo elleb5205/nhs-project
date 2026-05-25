@@ -1,112 +1,142 @@
 import streamlit as st
 
-# --- PAGE CONFIG ---
+# --- [DO NOT EDIT: UI & THEME] ---
 st.set_page_config(page_title="NHS | Institutional Portal", page_icon="📈", layout="centered")
 
-# --- PREMIUM FINTECH CSS ---
 st.markdown("""
     <style>
-    .stApp { background-color: #f8fafc; color: #1e293b; }
+    .stApp { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; }
     
-    /* Top Balance Card */
-    .balance-card {
-        background: linear-gradient(90deg, #00aeef 0%, #0072ff 100%);
-        color: white; padding: 25px; border-radius: 20px;
-        margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,114,255,0.2);
-    }
-
-    /* VIP Investment Cards */
+    /* Registration & Login Styling */
+    .auth-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    
+    /* Investment Cards */
     .vip-card {
-        background: white; border-radius: 15px; padding: 20px;
-        border: 1px solid #e2e8f0; margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        background: white; border-radius: 20px; padding: 20px;
+        margin-bottom: 20px; border: 1px solid #e2e8f0;
+        text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
-    .vip-header { color: #0072ff; font-weight: bold; font-size: 1.2rem; }
-    .price-tag { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin: 10px 0; }
+    .vip-img { width: 100%; border-radius: 15px; margin-bottom: 15px; height: 180px; object-fit: cover; }
+    .vip-price { font-size: 1.8rem; font-weight: 800; color: #0072ff; }
     
-    /* Bank Info Card */
-    .bank-card {
-        background: white; border-radius: 20px; padding: 25px;
-        border: 1px solid #e2e8f0; margin-top: 20px;
+    /* Payment Details Card */
+    .pay-card {
+        background: #f1f5f9; border-left: 5px solid #0072ff;
+        padding: 20px; border-radius: 10px; margin-top: 20px;
     }
     
-    /* Global Button Styling */
+    /* Global Button */
     div.stButton > button {
-        background: #00aeef !important; color: white !important;
-        border-radius: 12px !important; width: 100% !important;
-        border: none !important; font-weight: bold !important;
-        height: 45px !important;
+        background: linear-gradient(90deg, #00aeef 0%, #0072ff 100%) !important;
+        color: white !important; border-radius: 12px !important;
+        width: 100% !important; border: none !important;
+        height: 50px !important; font-weight: bold !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # --- SESSION LOGIC ---
-if "registered" not in st.session_state:
-    st.session_state.registered = False
+if "page" not in st.session_state:
+    st.session_state.page = "register"
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
 
-# --- 1. REGISTRATION SCREEN ---
-if not st.session_state.registered:
-    st.markdown("<h2 style='text-align:center;'>Create account</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#64748b;'>Join thousands building their future on NHS.</p>", unsafe_allow_html=True)
-    u_name = st.text_input("Username", placeholder="Choose username")
-    phone = st.text_input("Phone number")
-    pwd = st.text_input("Password", type="password")
+# --- [STAGE 1: PROFESSIONAL REGISTRATION] ---
+if st.session_state.page == "register":
+    st.markdown("<h1 style='text-align:center; color:#1e293b;'>Create account</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#64748b;'>Join thousands of others building their future.</p>", unsafe_allow_html=True)
     
-    if st.button("Complete registration"):
-        st.session_state.username = u_name if u_name else "Master"
-        st.session_state.registered = True
-        st.rerun()
+    with st.container():
+        col1, col2 = st.columns(2)
+        with col1: f_name = st.text_input("First name")
+        with col2: l_name = st.text_input("Last name")
+        
+        u_name = st.text_input("Username")
+        email = st.text_input("Email address")
+        phone = st.text_input("Phone number")
+        pwd = st.text_input("Password", type="password")
+        
+        if st.button("Complete registration"):
+            if u_name and pwd:
+                st.session_state.user_name = u_name
+                st.session_state.page = "dashboard"
+                st.rerun()
+            else:
+                st.error("Please fill in all required fields.")
 
-# --- 2. DASHBOARD ---
-else:
-    tab_home, tab_invest, tab_fund = st.tabs(["🏠 Home", "💎 VIP Tiers", "💳 Fund Wallet"])
-
-    with tab_home:
-        st.markdown(f"""
-            <div class="balance-card">
-                <p style="margin:0; font-size:0.9rem; opacity:0.8;">Total Balance</p>
-                <h1 style="margin:0; color:white;">₦ 0.00</h1>
-            </div>
-        """, unsafe_allow_html=True)
-        st.info("📢 Notice: NHPC Tier-1 Node is now active. Start your investment to earn daily.")
-
-    with tab_invest:
-        st.markdown("### Investment Plans")
-        # Fixed the number formatting here to avoid the SyntaxError
-        vips = [
-            {"name": "VIP 1", "price": 5000, "daily": 1150, "cycle": 30},
-            {"name": "VIP 2", "price": 15000, "daily": 3500, "cycle": 20},
-            {"name": "VIP 3", "price": 35000, "daily": 8200, "cycle": 20},
-            {"name": "VIP 4", "price": 70000, "daily": 16500, "cycle": 20},
-            {"name": "VIP 5", "price": 130000, "daily": 32000, "cycle": 20},
-        ]
-
-        for v in vips:
-            total_rev = v['daily'] * v['cycle']
-            st.markdown(f"""
+# --- [STAGE 2: DASHBOARD & INVESTMENTS] ---
+elif st.session_state.page == "dashboard":
+    st.markdown(f"### Welcome back, **{st.session_state.user_name}** 👋")
+    
+    tab1, tab2 = st.tabs(["💎 Investment Portfolios", "💳 My Wallet"])
+    
+    with tab1:
+        # VIP 1 - Expensive Car
+        with st.container():
+            st.markdown("""
                 <div class="vip-card">
-                    <div class="vip-header">{v['name']} - Infrastructure Node</div>
-                    <div class="price-tag">₦ {v['price']:,}</div>
-                    <p style="color:#64748b; font-size:0.9rem; margin:0;">
-                        Daily Income: <b>₦ {v['daily']:,}</b><br>
-                        Total Revenue: <b>₦ {total_rev:,}</b><br>
-                        Cycle: <b>{v['cycle']} Days</b>
-                    </p>
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=500" class="vip-img">
+                    <div style="color:#64748b; font-weight:bold;">VIP 1 - AUTOMOTIVE ASSET</div>
+                    <div class="vip-price">₦ 5,000</div>
+                    <p>Daily Income: <b>₦ 1,150</b> | Term: <b>30 Days</b></p>
                 </div>
             """, unsafe_allow_html=True)
-            if st.button(f"Invest in {v['name']}", key=v['name']):
-                st.toast("Redirecting to Deposit...")
+            if st.button("Invest in VIP 1", key="v1"):
+                st.session_state.page = "payment"
+                st.rerun()
 
-    with tab_fund:
-        st.markdown("### Fund wallet")
-        st.markdown(f"""
-            <div class="bank-card">
-                <p style="color:#64748b; margin-bottom:5px;">Bank name</p>
-                <h4 style="color:#00aeef; margin:0;">PalmPay</h4>
-                <p style="color:#64748b; margin-top:15px; margin-bottom:5px;">Account name</p>
-                <h4 style="margin:0;">{st.session_state.username} (NHS)</h4>
-                <p style="color:#64748b; margin-top:15px; margin-bottom:5px;">Account number</p>
-                <h2 style="margin:0; letter-spacing:2px;">6606239732</h2>
-            </div>
-        """, unsafe_allow_html=True)
+        # VIP 2 - Luxurious Wristwatch
+        with st.container():
+            st.markdown("""
+                <div class="vip-card">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500" class="vip-img">
+                    <div style="color:#64748b; font-weight:bold;">VIP 2 - LUXURY CHRONOGRAPH</div>
+                    <div class="vip-price">₦ 15,000</div>
+                    <p>Daily Income: <b>₦ 3,500</b> | Term: <b>20 Days</b></p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("Invest in VIP 2", key="v2"):
+                st.session_state.page = "payment"
+                st.rerun()
+
+        # VIP 3 - Gold Reserve
+        with st.container():
+            st.markdown("""
+                <div class="vip-card">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500" class="vip-img">
+                    <div style="color:#64748b; font-weight:bold;">VIP 3 - PRECIOUS METALS</div>
+                    <div class="vip-price">₦ 35,000</div>
+                    <p>Daily Income: <b>₦ 8,200</b> | Term: <b>20 Days</b></p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("Invest in VIP 3", key="v3"):
+                st.session_state.page = "payment"
+                st.rerun()
+
+# --- [STAGE 3: PROFESSIONAL PAYMENT PAGE] ---
+elif st.session_state.page == "payment":
+    st.markdown("### 💳 Deposit & Fund Account")
+    st.write("Complete your transfer below to activate your investment.")
+    
+    st.markdown(f"""
+        <div class="pay-card">
+            <p style="margin:0; font-size:0.8rem; color:#64748b;">BANK TRANSFER</p>
+            <h4 style="margin:5px 0;">Bank: <b>PalmPay</b></h4>
+            <h4 style="margin:5px 0;">A/C Name: <b>{st.session_state.user_name} (NHS)</b></h4>
+            <h2 style="margin:10px 0; color:#0072ff; letter-spacing:2px;">6606239732</h2>
+        </div>
         
+        <div class="pay-card" style="border-left-color: #f7931a; margin-top:20px;">
+            <p style="margin:0; font-size:0.8rem; color:#64748b;">CRYPTO DEPOSIT (USDT/BEP20)</p>
+            <p style="margin:5px 0; font-size:0.9rem; word-break: break-all;">
+                Address: <b>0x7b3336E08e8E37E468f78087263b610F584C1C4f</b>
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("I have made payment"):
+        st.success("Transaction submitted for verification!")
+        if st.button("Return to Home"):
+            st.session_state.page = "dashboard"
+            st.rerun()
+    
