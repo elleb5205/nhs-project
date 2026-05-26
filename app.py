@@ -11,7 +11,8 @@ st.set_page_config(
 )
 
 # ---------------- CUSTOM CSS - NHS ORANGE THEME ----------------
-st.markdown("""
+st.markdown(
+    """
 <style>
 #MainMenu {visibility:hidden;}
 footer {visibility:hidden;}
@@ -25,7 +26,6 @@ header {visibility:hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* HEADER */
 .main-header{
     padding:25px 20px;
     border-radius:0 0 30px 30px;
@@ -64,7 +64,6 @@ header {visibility:hidden;}
     font-weight:500;
 }
 
-/* WHITE CARD */
 .white-card{
     background:white;
     border-radius:25px;
@@ -74,22 +73,20 @@ header {visibility:hidden;}
     box-shadow:0 8px 25px rgba(0,0,0,0.1);
 }
 
-/* INPUTS */
 input{
-    border-radius:15px !important;
-    border:2px solid #e5e7eb !important;
-    padding:15px !important;
-    background:#f9fafb !important;
-    color:black !important;
-    font-weight:500 !important;
+    border-radius:15px!important;
+    border:2px solid #e5e7eb!important;
+    padding:15px!important;
+    background:#f9fafb!important;
+    color:black!important;
+    font-weight:500!important;
 }
 
 input:focus{
-    border:2px solid #ff6a00 !important;
-    box-shadow:none !important;
+    border:2px solid #ff6a00!important;
+    box-shadow:none!important;
 }
 
-/* BUTTONS */
 div.stButton > button{
     width:100%;
     height:52px;
@@ -101,13 +98,13 @@ div.stButton > button{
     font-size:16px;
     transition:all 0.2s;
 }
+
 div.stButton > button:hover{
     background:#e55a00;
     transform:translateY(-2px);
     box-shadow:0 5px 15px rgba(255,106,0,0.4);
 }
 
-/* VIP CARD */
 .vip-card{
     background:white;
     border-radius:25px;
@@ -138,7 +135,6 @@ div.stButton > button:hover{
     margin:5px 0;
 }
 
-/* MEMBER BOX */
 .member-box{
     background:#f8fafc;
     border-radius:16px;
@@ -149,7 +145,6 @@ div.stButton > button:hover{
     border:1px solid #e5e7eb;
 }
 
-/* LIVE TICKER */
 .ticker{
     background:white;
     color:#16a34a;
@@ -157,4 +152,327 @@ div.stButton > button:hover{
     border-radius:16px;
     font-weight:700;
     margin-bottom:18px;
-    box-shadow:0 4px 10px rgba(0
+    box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+.deposit-box{
+    background:linear-gradient(135deg,#fff7ed,#ffedd5);
+    padding:25px;
+    border-radius:22px;
+    border:3px solid #ff6a00;
+    text-align:center;
+}
+
+.nav-container{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#ff7b2c;
+    padding:14px 0 18px 0;
+    z-index:999999;
+    border-top:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 -4px 15px rgba(0,0,0,0.1);
+}
+</style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ---------------- SESSION ----------------
+if "page" not in st.session_state:
+    st.session_state.page = "register"
+if "user" not in st.session_state:
+    st.session_state.user = "Member"
+if "balance" not in st.session_state:
+    st.session_state.balance = 0.00
+if "invite_code" not in st.session_state:
+    st.session_state.invite_code = f"NHS{random.randint(100000,999999)}"
+if "active_vip" not in st.session_state:
+    st.session_state.active_vip = None
+
+# ---------------- REGISTER PAGE ----------------
+if st.session_state.page == "register":
+    st.markdown(
+        """
+    <div class="main-header">
+        <div class="logo-box">N</div>
+        <div class="brand-name">NHS</div>
+        <div class="brand-sub">Nigeria Helping Support</div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="white-card">', unsafe_allow_html=True)
+    st.subheader("Create Your NHS Account")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        fname = st.text_input("First Name", placeholder="David")
+    with col2:
+        lname = st.text_input("Last Name", placeholder="Okon")
+    
+    email = st.text_input("Email Address", placeholder="you@email.com")
+    password = st.text_input("Password", type="password", placeholder="Min 6 characters")
+    invite = st.text_input("Invitation Code", value="NHS2026")
+
+    if st.button("Sign Up to NHS"):
+        if fname and email and len(password) >= 6:
+            st.session_state.user = fname
+            st.session_state.page = "home"
+            st.rerun()
+        else:
+            st.error("Please fill all fields. Password must be 6+ characters.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------------- HOME PAGE ----------------
+elif st.session_state.page == "home":
+    st.markdown(
+        f"""
+    <div class="main-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="logo-box" style="width:60px;height:60px;font-size:28px;">N</div>
+                <div style="text-align:left;">
+                    <div style="font-size:30px;font-weight:900;">NHS</div>
+                    <div style="font-size:13px;opacity:0.9;">Welcome {st.session_state.user}</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:25px;">
+            <div style="font-size:15px;opacity:0.9;">Total Balance</div>
+            <div style="font-size:48px;font-weight:900;">₦{st.session_state.balance:,.0f}</div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    names = ["Precious", "Musa", "Blessing", "Chidi", "Ade", "Fatima", "David"]
+    st.markdown(
+        f"""
+    <div class="ticker">
+        🔥 {random.choice(names)} just withdrew ₦{random.randint(15,150)},000 successfully
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+    <div class="white-card">
+        <h3 style="margin-top:0;">About NHS</h3>
+        <p style="line-height:1.7;color:#4b5563;">
+        NHS is a digital financial growth platform built for Nigerians. 
+        We provide fast Naira deposits, instant VIP activation, daily profit tracking, 
+        and secure investment management. Join thousands earning daily.
+        </p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### NHS VIP Plans")
+
+    vips = [
+        {"name":"VIP 1 - Porsche Plan", "price":5000, "daily":1200, "img":"https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800"},
+        {"name":"VIP 2 - Rolex Plan", "price":15000, "daily":3500, "img":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"},
+        {"name":"VIP 3 - Real Estate Plan", "price":35000, "daily":8200, "img":"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800"},
+        {"name":"VIP 4 - Gold Reserve Plan", "price":70000, "daily":16500, "img":"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800"},
+    ]
+
+    for vip in vips:
+        st.markdown(
+            f"""
+        <div class="vip-card">
+            <img class="vip-img" src="{vip['img']}">
+            <div class="vip-profit">₦{vip['daily']:,}</div>
+            <div style="color:#6b7280;font-weight:600;">Daily Profit</div>
+            <div class="vip-price">₦{vip['price']:,}</div>
+            <div style="color:#6b7280;font-weight:600;">{vip['name']}</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+        if st.button(f"Activate {vip['name']}", key=vip['name']):
+            st.session_state.active_vip = vip['name']
+            st.session_state.page = "deposit"
+            st.rerun()
+
+    st.markdown(
+        """
+    <div class="white-card">
+        <h3 style="margin-top:0;">Recent Withdrawals</h3>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    for i in range(5):
+        st.markdown(
+            f"""
+        <div class="member-box">
+            +₦{random.randint(20,200)},000<br>
+            <span style="color:#6b7280;font-size:13px;">user****{random.randint(1000,9999)}</span>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------------- DEPOSIT PAGE ----------------
+elif st.session_state.page == "deposit":
+    st.markdown(
+        """
+    <div class="main-header">
+        <div class="brand-name">Fund Wallet</div>
+        <div class="brand-sub">Deposit to activate VIP</div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    if st.session_state.active_vip:
+        st.info(f"Selected: {st.session_state.active_vip}")
+
+    st.markdown(
+        """
+    <div class="white-card">
+        <h3 style="margin-top:0;">Bank Transfer Details</h3>
+        <div class="deposit-box">
+            <p style="margin:0;color:#6b7280;font-weight:600;">BANK NAME</p>
+            <h2 style="margin:8px 0;color:#111827;font-weight:900;">MONIEPOINT</h2>
+            
+            <p style="margin:20px 0 0 0;color:#6b7280;font-weight:600;">ACCOUNT NUMBER</p>
+            <h1 style="color:#ff6a00;margin:8px 0;font-size:36px;letter-spacing:2px;">8126419410</h1>
+            
+            <p style="margin:20px 0 0 0;color:#6b7280;font-weight:600;">ACCOUNT NAME</p>
+            <h3 style="color:#111827;margin:8px 0;">NHS FINANCIAL LTD</h3>
+        </div>
+        <br>
+        <div style="background:#f0fdf4;padding:16px;border-radius:16px;border:2px solid #22c55e;">
+            <div style="color:#166534;font-weight:600;">✅ After payment, click "I Have Paid" below</div>
+            <div style="color:#166534;font-size:13px;margin-top:5px;">Your wallet will be credited in 5-10 minutes</div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    if st.button("I HAVE MADE PAYMENT"):
+        st.success("Deposit received! Verification in progress. You will be credited soon.")
+        st.balloons()
+
+    if st.button("Back to Home"):
+        st.session_state.page = "home"
+        st.rerun()
+
+# ---------------- TEAM PAGE ----------------
+elif st.session_state.page == "team":
+    st.markdown(
+        """
+    <div class="main-header">
+        <div class="brand-name">My Team</div>
+        <div class="brand-sub">Invite & Earn Together</div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        f"""
+    <div class="white-card">
+        <div style="background:#f3f4f6;padding:18px;border-radius:18px;text-align:center;">
+            <div style="color:#6b7280;font-size:14px;font-weight:600;">Your Invitation Code</div>
+            <div style="font-size:34px;font-weight:900;letter-spacing:3px;color:#ff6a00;">{st.session_state.invite_code}</div>
+        </div>
+        <div style="margin-top:15px;color:#6b7280;font-size:13px;text-align:center;">
+            Share this code with friends. Earn 10% commission when they deposit.
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+    <div class="white-card" style="background:#fef3c7;">
+        <div style="display:flex;justify-content:space-around;text-align:center;">
+            <div>
+                <div style="color:#92400e;font-size:13px;font-weight:600;">Team Size</div>
+                <div style="font-size:28px;font-weight:900;color:#92400e;">0</div>
+            </div>
+            <div>
+                <div style="color:#92400e;font-size:13px;font-weight:600;">Team Earnings</div>
+                <div style="font-size:28px;font-weight:900;color:#92400e;">₦0</div>
+            </div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+# ---------------- ME/PROFILE PAGE ----------------
+elif st.session_state.page == "me":
+    st.markdown(
+        f"""
+    <div class="main-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="logo-box" style="width:65px;height:65px;font-size:30px;">N</div>
+            <div style="text-align:left;">
+                <div style="font-size:32px;font-weight:900;">{st.session_state.user}</div>
+                <div style="font-size:13px;opacity:0.9;">NHS Member</div>
+            </div>
+        </div>
+        <div style="margin-top:25px;">
+            <div style="font-size:15px;opacity:0.9;">Total Balance</div>
+            <div style="font-size:48px;font-weight:900;">₦{st.session_state.balance:,.0f}</div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+    <div class="white-card">
+        <div style="display:flex;justify-content:space-around;text-align:center;padding:5px 0;">
+            <div>💰<br><span style="font-size:12px;font-weight:600;">Recharge</span></div>
+            <div>💸<br><span style="font-size:12px;font-weight:600;">Withdraw</span></div>
+            <div>📊<br><span style="font-size:12px;font-weight:600;">Records</span></div>
+            <div>🎁<br><span style="font-size:12px;font-weight:600;">Bonus</span></div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    menu_items = ["Transaction History", "Change Password", "Customer Service", "Logout"]
+    for item in menu_items:
+        if st.button(item, key=f"menu_{item}", use_container_width=True):
+            if item == "Logout":
+                for key in st.session_state.keys():
+                    del st.session_state[key]
+                st.rerun()
+
+# ---------------- BOTTOM NAV ----------------
+if st.session_state.page!= "register":
+    st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        if st.button("🏠\nHome", key="nav_home", use_container_width=True):
+            st.session_state.page = "home"
+            st.rerun()
+    with col2:
+        if st.button("💎\nVIP", key="nav_vip", use_container_width=True):
+            st.session_state.page = "home"
+            st.rerun()
+    with col3:
+        if st.button("👥\nTeam", key="nav_team", use_container_width=True):
+            st.session_state.page = "team"
+            st.rerun()
+    with col4:
+        if st.button("👤\nMe", key="nav_me", use_container_width=True):
+            st.session_state.page = "me"
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
