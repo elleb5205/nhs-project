@@ -4,28 +4,29 @@ from datetime import datetime
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="NHS | Financial Growth",
+    page_title="NHS",
     page_icon="🅝",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# ---------------- CUSTOM CSS - NHS ORANGE THEME ----------------
-st.markdown(
-    """
+# ---------------- CUSTOM CSS - FIXED VERSION ----------------
+st.markdown("""
 <style>
 #MainMenu {visibility:hidden;}
 footer {visibility:hidden;}
 header {visibility:hidden;}
+.stDeployButton {display:none;}
 
 .stApp{
     background:#ff6a00;
     background-image: radial-gradient(circle at top right,#ff944d,#ff6a00);
     color:white;
-    padding-bottom: 90px;
+    padding-bottom: 100px;
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* HEADER */
 .main-header{
     padding:25px 20px;
     border-radius:0 0 30px 30px;
@@ -64,6 +65,7 @@ header {visibility:hidden;}
     font-weight:500;
 }
 
+/* WHITE CARD */
 .white-card{
     background:white;
     border-radius:25px;
@@ -73,7 +75,8 @@ header {visibility:hidden;}
     box-shadow:0 8px 25px rgba(0,0,0,0.1);
 }
 
-input{
+/* INPUTS */
+.stTextInput > div > div > input{
     border-radius:15px!important;
     border:2px solid #e5e7eb!important;
     padding:15px!important;
@@ -82,11 +85,12 @@ input{
     font-weight:500!important;
 }
 
-input:focus{
+.stTextInput > div > div > input:focus{
     border:2px solid #ff6a00!important;
     box-shadow:none!important;
 }
 
+/* BUTTONS */
 div.stButton > button{
     width:100%;
     height:52px;
@@ -105,6 +109,7 @@ div.stButton > button:hover{
     box-shadow:0 5px 15px rgba(255,106,0,0.4);
 }
 
+/* VIP CARD */
 .vip-card{
     background:white;
     border-radius:25px;
@@ -135,6 +140,7 @@ div.stButton > button:hover{
     margin:5px 0;
 }
 
+/* MEMBER BOX */
 .member-box{
     background:#f8fafc;
     border-radius:16px;
@@ -145,6 +151,7 @@ div.stButton > button:hover{
     border:1px solid #e5e7eb;
 }
 
+/* TICKER */
 .ticker{
     background:white;
     color:#16a34a;
@@ -155,6 +162,7 @@ div.stButton > button:hover{
     box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
+/* DEPOSIT CARD */
 .deposit-box{
     background:linear-gradient(135deg,#fff7ed,#ffedd5);
     padding:25px;
@@ -163,21 +171,45 @@ div.stButton > button:hover{
     text-align:center;
 }
 
-.nav-container{
+/* TEAM LEVELS */
+.team-level{
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:15px;
+    color:white;
+    position:relative;
+    overflow:hidden;
+}
+.level1{background:linear-gradient(135deg,#8b5cf6,#6d28d9);}
+.level2{background:linear-gradient(135deg,#3b82f6,#1d4ed8);}
+.level3{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
+
+/* BOTTOM NAV - FIXED AT BOTTOM */
+.bottom-nav{
     position:fixed;
     bottom:0;
     left:0;
     width:100%;
     background:#ff7b2c;
-    padding:14px 0 18px 0;
+    padding:12px 0 16px 0;
     z-index:999999;
     border-top:1px solid rgba(255,255,255,0.3);
     box-shadow:0 -4px 15px rgba(0,0,0,0.1);
 }
+
+.nav-item{
+    text-align:center;
+    color:white;
+    font-size:12px;
+    font-weight:600;
+    opacity:0.8;
+}
+.nav-item.active{
+    opacity:1;
+    font-weight:800;
+}
 </style>
-    """,
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
 # ---------------- SESSION ----------------
 if "page" not in st.session_state:
@@ -193,31 +225,28 @@ if "active_vip" not in st.session_state:
 
 # ---------------- REGISTER PAGE ----------------
 if st.session_state.page == "register":
-    st.markdown(
-        """
+    st.markdown("""
     <div class="main-header">
         <div class="logo-box">N</div>
         <div class="brand-name">NHS</div>
         <div class="brand-sub">Nigeria Helping Support</div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
     st.subheader("Create Your NHS Account")
 
     col1, col2 = st.columns(2)
     with col1:
-        fname = st.text_input("First Name", placeholder="David")
+        fname = st.text_input("First Name", placeholder="David", key="fname")
     with col2:
-        lname = st.text_input("Last Name", placeholder="Okon")
+        lname = st.text_input("Last Name", placeholder="Okon", key="lname")
     
-    email = st.text_input("Email Address", placeholder="you@email.com")
-    password = st.text_input("Password", type="password", placeholder="Min 6 characters")
-    invite = st.text_input("Invitation Code", value="NHS2026")
+    email = st.text_input("Email Address", placeholder="you@email.com", key="email")
+    password = st.text_input("Password", type="password", placeholder="Min 6 characters", key="pwd")
+    invite = st.text_input("Invitation Code", value="NHS2026", key="invite")
 
-    if st.button("Sign Up to NHS"):
+    if st.button("Sign Up to NHS", key="signup"):
         if fname and email and len(password) >= 6:
             st.session_state.user = fname
             st.session_state.page = "home"
@@ -228,16 +257,13 @@ if st.session_state.page == "register":
 
 # ---------------- HOME PAGE ----------------
 elif st.session_state.page == "home":
-    st.markdown(
-        f"""
+    st.markdown(f"""
     <div class="main-header">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:12px;">
-                <div class="logo-box" style="width:60px;height:60px;font-size:28px;">N</div>
-                <div style="text-align:left;">
-                    <div style="font-size:30px;font-weight:900;">NHS</div>
-                    <div style="font-size:13px;opacity:0.9;">Welcome {st.session_state.user}</div>
-                </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="logo-box" style="width:60px;height:60px;font-size:28px;">N</div>
+            <div style="text-align:left;">
+                <div style="font-size:30px;font-weight:900;">NHS</div>
+                <div style="font-size:13px;opacity:0.9;">Welcome {st.session_state.user}</div>
             </div>
         </div>
         <div style="margin-top:25px;">
@@ -245,22 +271,16 @@ elif st.session_state.page == "home":
             <div style="font-size:48px;font-weight:900;">₦{st.session_state.balance:,.0f}</div>
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     names = ["Precious", "Musa", "Blessing", "Chidi", "Ade", "Fatima", "David"]
-    st.markdown(
-        f"""
+    st.markdown(f"""
     <div class="ticker">
         🔥 {random.choice(names)} just withdrew ₦{random.randint(15,150)},000 successfully
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
+    st.markdown("""
     <div class="white-card">
         <h3 style="margin-top:0;">About NHS</h3>
         <p style="line-height:1.7;color:#4b5563;">
@@ -269,9 +289,7 @@ elif st.session_state.page == "home":
         and secure investment management. Join thousands earning daily.
         </p>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     st.markdown("### NHS VIP Plans")
 
@@ -283,8 +301,7 @@ elif st.session_state.page == "home":
     ]
 
     for vip in vips:
-        st.markdown(
-            f"""
+        st.markdown(f"""
         <div class="vip-card">
             <img class="vip-img" src="{vip['img']}">
             <div class="vip-profit">₦{vip['daily']:,}</div>
@@ -292,51 +309,73 @@ elif st.session_state.page == "home":
             <div class="vip-price">₦{vip['price']:,}</div>
             <div style="color:#6b7280;font-weight:600;">{vip['name']}</div>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-        if st.button(f"Activate {vip['name']}", key=vip['name']):
+        """, unsafe_allow_html=True)
+        if st.button(f"Activate {vip['name']}", key=f"vip_{vip['name']}"):
             st.session_state.active_vip = vip['name']
             st.session_state.page = "deposit"
             st.rerun()
 
-    st.markdown(
-        """
+    st.markdown("""
     <div class="white-card">
         <h3 style="margin-top:0;">Recent Withdrawals</h3>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     for i in range(5):
-        st.markdown(
-            f"""
+        st.markdown(f"""
         <div class="member-box">
             +₦{random.randint(20,200)},000<br>
             <span style="color:#6b7280;font-size:13px;">user****{random.randint(1000,9999)}</span>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------- DEPOSIT PAGE ----------------
+# ---------------- PROJECT/VIP PAGE ----------------
+elif st.session_state.page == "project":
+    st.markdown("""
+    <div class="main-header">
+        <div class="brand-name">NHS Projects</div>
+        <div class="brand-sub">Choose Your Investment Plan</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    vips = [
+        {"name":"VIP1", "price":"₦5,000", "daily":"₦1,200", "cycle":"30 Days"},
+        {"name":"VIP2", "price":"₦15,000", "daily":"₦3,500", "cycle":"30 Days"},
+        {"name":"VIP3", "price":"₦35,000", "daily":"₦8,200", "cycle":"30 Days"},
+        {"name":"VIP4", "price":"₦70,000", "daily":"₦16,500", "cycle":"30 Days"},
+    ]
+
+    for vip in vips:
+        st.markdown(f"""
+        <div class="white-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="font-weight:800;font-size:18px;">{vip['name']}</div>
+                    <div style="font-size:13px;color:#6b7280;margin-top:5px;">Daily profit</div>
+                    <div style="color:#16a34a;font-weight:700;font-size:16px;">{vip['daily']}</div>
+                    <div style="font-size:13px;color:#6b7280;margin-top:5px;">Invest cycle</div>
+                    <div style="color:#16a34a;font-weight:700;">{vip['cycle']}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="background:#111827;color:white;padding:10px 20px;border-radius:50px;font-weight:700;">{vip['price']} Buy now</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ---------------- DEPOSIT PAGE - SHOWS YOUR ACCOUNT ----------------
 elif st.session_state.page == "deposit":
-    st.markdown(
-        """
+    st.markdown("""
     <div class="main-header">
         <div class="brand-name">Fund Wallet</div>
         <div class="brand-sub">Deposit to activate VIP</div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     if st.session_state.active_vip:
         st.info(f"Selected: {st.session_state.active_vip}")
 
-    st.markdown(
-        """
+    st.markdown("""
     <div class="white-card">
         <h3 style="margin-top:0;">Bank Transfer Details</h3>
         <div class="deposit-box">
@@ -355,32 +394,26 @@ elif st.session_state.page == "deposit":
             <div style="color:#166534;font-size:13px;margin-top:5px;">Your wallet will be credited in 5-10 minutes</div>
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    if st.button("I HAVE MADE PAYMENT"):
+    if st.button("I HAVE MADE PAYMENT", key="paid"):
         st.success("Deposit received! Verification in progress. You will be credited soon.")
         st.balloons()
 
-    if st.button("Back to Home"):
+    if st.button("Back to Home", key="back_home"):
         st.session_state.page = "home"
         st.rerun()
 
 # ---------------- TEAM PAGE ----------------
 elif st.session_state.page == "team":
-    st.markdown(
-        """
+    st.markdown("""
     <div class="main-header">
         <div class="brand-name">My Team</div>
         <div class="brand-sub">Invite & Earn Together</div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        f"""
+    st.markdown(f"""
     <div class="white-card">
         <div style="background:#f3f4f6;padding:18px;border-radius:18px;text-align:center;">
             <div style="color:#6b7280;font-size:14px;font-weight:600;">Your Invitation Code</div>
@@ -390,12 +423,9 @@ elif st.session_state.page == "team":
             Share this code with friends. Earn 10% commission when they deposit.
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
+    st.markdown("""
     <div class="white-card" style="background:#fef3c7;">
         <div style="display:flex;justify-content:space-around;text-align:center;">
             <div>
@@ -408,14 +438,38 @@ elif st.session_state.page == "team":
             </div>
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
+
+    levels = [
+        {"level": "LEVEL 1", "commission": "16%", "class": "level1"},
+        {"level": "LEVEL 2", "commission": "2%", "class": "level2"},
+        {"level": "LEVEL 3", "commission": "1%", "class": "level3"},
+    ]
+
+    for lvl in levels:
+        st.markdown(f"""
+        <div class="team-level {lvl['class']}">
+            <div style="position:absolute;top:10px;left:-5px;background:#fbbf24;color:#000;padding:5px 15px;transform:rotate(-45deg);font-size:12px;font-weight:bold;">{lvl['level']}</div>
+            <div style="display:flex;justify-content:space-between;margin-top:20px;">
+                <div>
+                    <div style="font-size:13px;opacity:0.9;">Register/Valid</div>
+                    <div style="font-size:20px;font-weight:bold;">0/0</div>
+                    <div style="font-size:13px;opacity:0.9;margin-top:10px;">Task rebate</div>
+                    <div style="font-size:20px;font-weight:bold;">1%</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:13px;opacity:0.9;">Commission Percentage</div>
+                    <div style="font-size:20px;font-weight:bold;">{lvl['commission']}</div>
+                    <div style="font-size:13px;opacity:0.9;margin-top:10px;">Total Income</div>
+                    <div style="font-size:20px;font-weight:bold;">0</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ---------------- ME/PROFILE PAGE ----------------
 elif st.session_state.page == "me":
-    st.markdown(
-        f"""
+    st.markdown(f"""
     <div class="main-header">
         <div style="display:flex;align-items:center;gap:12px;">
             <div class="logo-box" style="width:65px;height:65px;font-size:30px;">N</div>
@@ -429,23 +483,18 @@ elif st.session_state.page == "me":
             <div style="font-size:48px;font-weight:900;">₦{st.session_state.balance:,.0f}</div>
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
+    st.markdown("""
     <div class="white-card">
         <div style="display:flex;justify-content:space-around;text-align:center;padding:5px 0;">
-            <div>💰<br><span style="font-size:12px;font-weight:600;">Recharge</span></div>
-            <div>💸<br><span style="font-size:12px;font-weight:600;">Withdraw</span></div>
-            <div>📊<br><span style="font-size:12px;font-weight:600;">Records</span></div>
-            <div>🎁<br><span style="font-size:12px;font-weight:600;">Bonus</span></div>
+            <div style="cursor:pointer;" onclick="window.location.href='#'">💰<br><span style="font-size:12px;font-weight:600;">Recharge</span></div>
+            <div style="cursor:pointer;">💸<br><span style="font-size:12px;font-weight:600;">Withdraw</span></div>
+            <div style="cursor:pointer;">📊<br><span style="font-size:12px;font-weight:600;">Records</span></div>
+            <div style="cursor:pointer;">🎁<br><span style="font-size:12px;font-weight:600;">Bonus</span></div>
         </div>
     </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
     menu_items = ["Transaction History", "Change Password", "Customer Service", "Logout"]
     for item in menu_items:
@@ -454,18 +503,22 @@ elif st.session_state.page == "me":
                 for key in st.session_state.keys():
                     del st.session_state[key]
                 st.rerun()
+            elif item == "Customer Service":
+                st.session_state.page = "deposit"
+                st.rerun()
 
-# ---------------- BOTTOM NAV ----------------
+# ---------------- BOTTOM NAV - FIXED AT BOTTOM ----------------
 if st.session_state.page!= "register":
-    st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-nav">', unsafe_allow_html=True)
     col1, col2, col3, col4 = st.columns(4)
+    
     with col1:
         if st.button("🏠\nHome", key="nav_home", use_container_width=True):
             st.session_state.page = "home"
             st.rerun()
     with col2:
-        if st.button("💎\nVIP", key="nav_vip", use_container_width=True):
-            st.session_state.page = "home"
+        if st.button("💎\nProject", key="nav_project", use_container_width=True):
+            st.session_state.page = "project"
             st.rerun()
     with col3:
         if st.button("👥\nTeam", key="nav_team", use_container_width=True):
